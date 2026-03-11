@@ -1,0 +1,27 @@
+name: Golden Hour — Fetch Actuals
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC daily (7am Slovenia)
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  fetch-actuals:
+    name: Fetch Actual Weather
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch actuals
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python scripts/fetch_actuals.py
